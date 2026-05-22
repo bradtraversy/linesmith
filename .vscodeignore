@@ -9,4 +9,3 @@ node_modules/**
 SPEC.md
 *.vsix
 media/icon.svg
-media/demo.gif

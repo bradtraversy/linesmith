@@ -2,7 +2,7 @@
 
 A VS Code / Cursor / Windsurf extension that types code into the active editor on cue — clean playback, no autocomplete fights. Built so recording tutorials stops being a typo-and-retake loop.
 
-![Linesmith demo](https://raw.githubusercontent.com/bradtraversy/linesmith/main/media/demo.gif)
+![Linesmith demo](media/demo.gif)
 
 ## Install
 
