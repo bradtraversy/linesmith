@@ -3,7 +3,7 @@ import { TypingEngine } from "./engine";
 import { parseLinesmith } from "./parser";
 import { LinesmithPanel, PanelHostMessage, PanelState } from "./panel";
 import { StatusBar } from "./statusBar";
-import { Chunk, PlaybackSpec, SessionSettings } from "./types";
+import { Chunk, PlaybackSpec, PlaybackStatus, SessionSettings } from "./types";
 
 const LANGUAGE_ID = "linesmith";
 const FILE_EXT = ".linesmith";
@@ -29,11 +29,15 @@ class LinesmithController {
 
   constructor(private context: vscode.ExtensionContext) {
     this.settings = this.loadSettings();
+    let lastStatus: PlaybackStatus | null = null;
     this.engine.onProgress((update) => {
       this.statusBar.update(update);
       LinesmithPanel.getCurrent()?.setProgress(update);
-      if (update.status === "idle" || update.status === "cancelled") {
-        this.playingChunkIndex = null;
+      if (update.status !== lastStatus) {
+        lastStatus = update.status;
+        if (update.status === "idle" || update.status === "cancelled") {
+          this.playingChunkIndex = null;
+        }
         this.pushState();
       }
     });
