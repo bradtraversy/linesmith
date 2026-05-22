@@ -7,3 +7,5 @@ tsconfig.json
 **/*.ts
 node_modules/**
 SPEC.md
+*.vsix
+media/icon.svg
