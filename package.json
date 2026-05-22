@@ -63,6 +63,10 @@
       {
         "command": "linesmith.stop",
         "title": "Linesmith: Stop"
+      },
+      {
+        "command": "linesmith.reset",
+        "title": "Linesmith: Reset Target and Chunks"
       }
     ],
     "keybindings": [

@@ -10,6 +10,7 @@ export interface PanelHostMessage {
     | "settingsChanged"
     | "newScript"
     | "detach"
+    | "reset"
     | "ready";
   index?: number;
   settings?: SessionSettings;
@@ -155,6 +156,7 @@ export class LinesmithPanel {
       <button id="play-next-btn" class="primary">▶ Play Next</button>
       <button id="pause-btn">⏸ Pause</button>
       <button id="stop-btn">⏹ Stop</button>
+      <button id="reset-btn" class="secondary" title="Clear the target file and re-arm all chunks">⟲ Reset</button>
     </div>
   </section>
 

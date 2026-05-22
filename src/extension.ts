@@ -59,7 +59,8 @@ class LinesmithController {
       vscode.commands.registerCommand("linesmith.playNext", () => this.playNext()),
       vscode.commands.registerCommand("linesmith.playClipboard", () => this.playClipboard()),
       vscode.commands.registerCommand("linesmith.pauseResume", () => this.pauseResume()),
-      vscode.commands.registerCommand("linesmith.stop", () => this.stop())
+      vscode.commands.registerCommand("linesmith.stop", () => this.stop()),
+      vscode.commands.registerCommand("linesmith.reset", () => this.reset())
     );
     this.onActiveEditorChanged(vscode.window.activeTextEditor);
   }
@@ -300,6 +301,28 @@ class LinesmithController {
     this.engine.stop();
   }
 
+  private async reset(): Promise<void> {
+    if (this.engine.status === "playing" || this.engine.status === "paused") {
+      this.engine.stop();
+    }
+
+    const target = await this.resolveTarget();
+    if (target && target.document.getText().length > 0) {
+      const doc = target.document;
+      const fullRange = new vscode.Range(
+        new vscode.Position(0, 0),
+        doc.lineAt(doc.lineCount - 1).range.end
+      );
+      await target.edit((edit) => edit.delete(fullRange));
+      const start = new vscode.Position(0, 0);
+      target.selection = new vscode.Selection(start, start);
+    }
+
+    this.chunks = this.chunks.map((c) => ({ ...c, played: false }));
+    this.playingChunkIndex = null;
+    this.pushState();
+  }
+
   private handlePanelMessage(msg: PanelHostMessage): void {
     this.output.appendLine(`[panel] ${msg.type}${msg.index !== undefined ? ` index=${msg.index}` : ""}`);
     switch (msg.type) {
@@ -323,6 +346,9 @@ class LinesmithController {
         break;
       case "detach":
         void this.detachPanel();
+        break;
+      case "reset":
+        void this.reset();
         break;
       case "settingsChanged":
         if (msg.settings) {

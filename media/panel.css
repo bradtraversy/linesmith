@@ -205,6 +205,18 @@ button.primary {
   font-weight: 600;
 }
 
+button.secondary {
+  background: transparent;
+  color: var(--vscode-descriptionForeground);
+  border: 1px solid var(--vscode-panel-border);
+  margin-left: auto;
+}
+
+button.secondary:hover {
+  background: var(--vscode-toolbar-hoverBackground);
+  color: var(--vscode-foreground);
+}
+
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;

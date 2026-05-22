@@ -15,6 +15,7 @@
     playNextBtn: document.getElementById("play-next-btn"),
     pauseBtn: document.getElementById("pause-btn"),
     stopBtn: document.getElementById("stop-btn"),
+    resetBtn: document.getElementById("reset-btn"),
   };
 
   let state = null;
@@ -118,6 +119,7 @@
   els.playNextBtn.addEventListener("click", () => send({ type: "playNext" }));
   els.pauseBtn.addEventListener("click", () => send({ type: "pauseResume" }));
   els.stopBtn.addEventListener("click", () => send({ type: "stop" }));
+  els.resetBtn.addEventListener("click", () => send({ type: "reset" }));
 
   els.modeSelect.addEventListener("change", () => send({ type: "settingsChanged", settings: currentSettings() }));
   els.jitterCheckbox.addEventListener("change", () => send({ type: "settingsChanged", settings: currentSettings() }));
