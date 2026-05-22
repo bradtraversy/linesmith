@@ -1,0 +1,157 @@
+{
+  "name": "linesmith",
+  "displayName": "Linesmith",
+  "description": "Type code into your editor on cue for tutorial recording — clean playback, no autocomplete fights.",
+  "version": "0.1.0",
+  "publisher": "bradtraversy",
+  "author": {
+    "name": "Brad Traversy"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bradtraversy/linesmith.git"
+  },
+  "homepage": "https://github.com/bradtraversy/linesmith#readme",
+  "bugs": {
+    "url": "https://github.com/bradtraversy/linesmith/issues"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Education"
+  ],
+  "keywords": [
+    "tutorial",
+    "recording",
+    "typing",
+    "demo",
+    "screencast"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "workspaceContains:**/*.linesmith"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "linesmith.openPanel",
+        "title": "Linesmith: Open Panel"
+      },
+      {
+        "command": "linesmith.detachPanel",
+        "title": "Linesmith: Detach Panel to New Window"
+      },
+      {
+        "command": "linesmith.newScript",
+        "title": "Linesmith: New Script"
+      },
+      {
+        "command": "linesmith.playNext",
+        "title": "Linesmith: Play Next Chunk"
+      },
+      {
+        "command": "linesmith.playClipboard",
+        "title": "Linesmith: Play From Clipboard"
+      },
+      {
+        "command": "linesmith.pauseResume",
+        "title": "Linesmith: Pause / Resume"
+      },
+      {
+        "command": "linesmith.stop",
+        "title": "Linesmith: Stop"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "linesmith.playNext",
+        "key": "ctrl+alt+l",
+        "mac": "cmd+alt+l"
+      },
+      {
+        "command": "linesmith.playClipboard",
+        "key": "ctrl+alt+shift+l",
+        "mac": "cmd+alt+shift+l"
+      },
+      {
+        "command": "linesmith.stop",
+        "key": "ctrl+alt+escape",
+        "mac": "cmd+alt+escape"
+      }
+    ],
+    "languages": [
+      {
+        "id": "linesmith",
+        "aliases": [
+          "Linesmith",
+          "linesmith"
+        ],
+        "extensions": [
+          ".linesmith"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/linesmith-file.svg",
+          "dark": "./icons/linesmith-file.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "linesmith",
+        "scopeName": "source.linesmith",
+        "path": "./syntaxes/linesmith.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "title": "Linesmith",
+      "properties": {
+        "linesmith.defaultMode": {
+          "type": "string",
+          "enum": [
+            "instant",
+            "line",
+            "char"
+          ],
+          "default": "char",
+          "description": "Default typing mode for new sessions."
+        },
+        "linesmith.defaultWpm": {
+          "type": "number",
+          "default": 80,
+          "minimum": 20,
+          "maximum": 200,
+          "description": "Default words-per-minute for character mode."
+        },
+        "linesmith.defaultJitter": {
+          "type": "boolean",
+          "default": true,
+          "description": "Add human-like variance to per-character delay in character mode."
+        },
+        "linesmith.defaultLineDelayMs": {
+          "type": "number",
+          "default": 120,
+          "minimum": 0,
+          "maximum": 2000,
+          "description": "Pause between lines in line mode (ms)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package",
+    "publish:vsce": "vsce publish",
+    "publish:ovsx": "ovsx publish"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.4.0"
+  }
+}
