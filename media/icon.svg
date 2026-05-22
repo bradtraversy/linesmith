@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <rect width="128" height="128" rx="24" fill="#1a2332"/>
+
+  <!-- chunk 1 (already typed) -->
+  <rect x="22" y="18" width="72" height="22" rx="5" fill="#7cb7ff" opacity="0.45"/>
+
+  <!-- separator 1 -->
+  <g stroke="#6b7a90" stroke-width="3" stroke-linecap="round">
+    <line x1="34" y1="50" x2="46" y2="50"/>
+    <line x1="54" y1="50" x2="66" y2="50"/>
+    <line x1="74" y1="50" x2="86" y2="50"/>
+  </g>
+
+  <!-- chunk 2 (already typed) -->
+  <rect x="22" y="58" width="84" height="22" rx="5" fill="#7cb7ff" opacity="0.45"/>
+
+  <!-- separator 2 -->
+  <g stroke="#6b7a90" stroke-width="3" stroke-linecap="round">
+    <line x1="34" y1="90" x2="46" y2="90"/>
+    <line x1="54" y1="90" x2="66" y2="90"/>
+    <line x1="74" y1="90" x2="86" y2="90"/>
+  </g>
+
+  <!-- chunk 3 (being typed right now) -->
+  <rect x="22" y="98" width="56" height="22" rx="5" fill="#ff9f43"/>
+
+  <!-- cursor at the leading edge of chunk 3 -->
+  <rect x="82" y="100" width="4" height="18" rx="1" fill="#ff9f43"/>
+</svg>

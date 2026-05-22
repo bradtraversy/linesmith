@@ -4,6 +4,7 @@
   "description": "Type code into your editor on cue for tutorial recording — clean playback, no autocomplete fights.",
   "version": "0.1.0",
   "publisher": "bradtraversy",
+  "icon": "media/icon.png",
   "author": {
     "name": "Brad Traversy"
   },
