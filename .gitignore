@@ -3,3 +3,9 @@ out/
 *.vsix
 .vscode-test/
 .DS_Store
+
+# .vscode/ — only commit the dev-required files; ignore personal settings
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/extensions.json
