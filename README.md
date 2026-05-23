@@ -35,6 +35,22 @@ export default Counter;
 
 Three chunks, played one at a time.
 
+### Talking-point notes (`@note`)
+
+Add `@note` lines at the top of a chunk to attach talking points that show in the panel but never get typed into the target. Stack as many as you want — they render under the chunk preview as a reminder of what to say while typing.
+
+```
+@note Set the scene — debouncing is the classic search-input problem
+@note Closure point: timeoutId persists across calls
+
+function debounce(fn, delay = 300) {
+  let timeoutId;
+  ...
+}
+```
+
+The first blank or non-`@` line ends the directive block; everything after that is the body that gets typed.
+
 ### The recording flow
 
 1. Open your `.linesmith` script in one tab
@@ -43,6 +59,14 @@ Three chunks, played one at a time.
 4. Hit **Play Next** (or `ctrl+alt+l` / `cmd+alt+l`) to type the next chunk
 
 The target editor is whichever non-`.linesmith` tab you last clicked into. The panel shows it in the header so it's never ambiguous.
+
+### Countdown before playback
+
+Optional 3-second or 5-second pre-roll before Play Next starts typing — gives you time to finish narrating the lead-in before characters appear. Toggle via the **Countdown** dropdown in the panel, or set a default with `linesmith.defaultCountdown`. Off by default; the clipboard fast path always skips countdown.
+
+### Re-arm from any chunk
+
+Hover a chunk card and click the **⏮** button to mark earlier chunks as played and this chunk + all later as un-played. Useful when a take goes wrong partway through — `Ctrl+Z` in the target to undo the bad code, click ⏮ on the chunk to restart from, then hit Play Next.
 
 ### Clipboard fast path
 
@@ -64,9 +88,10 @@ For one-off blocks: copy code anywhere, focus the target editor, hit `ctrl+alt+s
 | Setting | Default | Notes |
 | --- | --- | --- |
 | `linesmith.defaultMode` | `char` | `instant` / `line` / `char` |
-| `linesmith.defaultWpm` | `80` | char mode speed (20–200) |
+| `linesmith.defaultWpm` | `80` | char mode speed (20–300) |
 | `linesmith.defaultJitter` | `true` | adds human-like timing variance |
 | `linesmith.defaultLineDelayMs` | `120` | pause between lines in line mode |
+| `linesmith.defaultCountdown` | `0` | seconds before Play Next starts typing (`0` / `3` / `5`) |
 
 ## How it works
 
