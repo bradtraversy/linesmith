@@ -1,7 +1,13 @@
+@note Set the scene — "every front-end dev hits this: a search input firing requests on every keystroke"
+@note Mention that lodash has one, but rolling your own is a great closure exercise
+
 function debounce(fn, delay = 300) {
   let timeoutId;
 
 ---
+
+@note Explain the returned function — "this is the function the user actually calls"
+@note Closure point: timeoutId persists across calls because it's captured by the inner function
 
   return (...args) => {
     clearTimeout(timeoutId);
@@ -14,10 +20,16 @@ function debounce(fn, delay = 300) {
 
 ---
 
+@note Now wire it to a real-world example
+@note Point out that 500ms is a good default for search-as-you-type
+
 const handleSearch = (q) => console.log('searching:', q);
 const debouncedSearch = debounce(handleSearch, 500);
 
 ---
+
+@note The payoff — five calls in a row, only one fires
+@note Have the dev tools console open here so the single log line lands the point
 
 debouncedSearch('h');
 debouncedSearch('he');

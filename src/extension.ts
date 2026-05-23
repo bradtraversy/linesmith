@@ -9,6 +9,9 @@ const LANGUAGE_ID = "linesmith";
 const FILE_EXT = ".linesmith";
 
 const SEED_SCRIPT = `# new linesmith script — chunks separated by --- on its own line
+# add @note lines at the top of a chunk to show talking points in the panel
+
+@note Talking point for this chunk — shown in the panel, never typed
 
 console.log("hello, world");
 
@@ -25,6 +28,8 @@ class LinesmithController {
   private scriptUri: vscode.Uri | null = null;
   private chunks: Chunk[] = [];
   private playingChunkIndex: number | null = null;
+  private countdown: { chunkIndex: number; secondsLeft: number } | null = null;
+  private countdownAbort: AbortController | null = null;
   private output = vscode.window.createOutputChannel("Linesmith");
 
   constructor(private context: vscode.ExtensionContext) {
@@ -72,6 +77,7 @@ class LinesmithController {
       wpm: config.get<number>("defaultWpm", 80),
       jitter: config.get<boolean>("defaultJitter", true),
       lineDelayMs: config.get<number>("defaultLineDelayMs", 120),
+      countdownSeconds: config.get<number>("defaultCountdown", 0),
     };
   }
 
@@ -122,6 +128,7 @@ class LinesmithController {
       settings: this.settings,
       status: this.engine.status,
       playingChunkIndex: this.playingChunkIndex,
+      countdown: this.countdown,
     };
     panel.setState(state);
   }
@@ -142,6 +149,7 @@ class LinesmithController {
       settings: this.settings,
       status: this.engine.status,
       playingChunkIndex: this.playingChunkIndex,
+      countdown: this.countdown,
     });
   }
 
@@ -188,6 +196,10 @@ class LinesmithController {
   }
 
   private async playChunk(index: number): Promise<void> {
+    if (this.countdown || this.engine.status === "playing" || this.engine.status === "paused") {
+      this.output.appendLine(`[playChunk] busy (countdown=${!!this.countdown}, engine=${this.engine.status}) — ignored`);
+      return;
+    }
     const chunk = this.chunks[index];
     if (!chunk) {
       this.output.appendLine(`[playChunk] no chunk at index ${index}`);
@@ -202,10 +214,27 @@ class LinesmithController {
       `[playChunk] index=${index} target=${target.document.uri.fsPath} mode=${this.settings.mode}`
     );
 
-    await this.ensureFreshLine(target);
-
     this.playingChunkIndex = index;
     this.pushState();
+
+    let liveTarget = target;
+    if (this.settings.countdownSeconds > 0) {
+      const cancelled = await this.runCountdown(index, this.settings.countdownSeconds);
+      if (cancelled) {
+        this.playingChunkIndex = null;
+        this.pushState();
+        return;
+      }
+      const refreshed = await this.resolveTarget();
+      if (!refreshed) {
+        this.playingChunkIndex = null;
+        this.pushState();
+        return;
+      }
+      liveTarget = refreshed;
+    }
+
+    await this.ensureFreshLine(liveTarget);
 
     const spec: PlaybackSpec = {
       text: chunk.text,
@@ -214,7 +243,7 @@ class LinesmithController {
       jitter: this.settings.jitter,
       lineDelayMs: this.settings.lineDelayMs,
     };
-    const result = await this.engine.play(spec, target, {
+    const result = await this.engine.play(spec, liveTarget, {
       chunkIndex: index,
       chunkTotal: this.chunks.length,
     });
@@ -298,7 +327,41 @@ class LinesmithController {
   }
 
   private stop(): void {
+    if (this.countdownAbort) this.countdownAbort.abort();
     this.engine.stop();
+  }
+
+  private async runCountdown(chunkIndex: number, seconds: number): Promise<boolean> {
+    this.countdownAbort = new AbortController();
+    const signal = this.countdownAbort.signal;
+    try {
+      for (let secondsLeft = seconds; secondsLeft > 0; secondsLeft--) {
+        this.countdown = { chunkIndex, secondsLeft };
+        this.statusBar.showCountdown(secondsLeft);
+        this.pushState();
+        const aborted = await sleep(1000, signal);
+        if (aborted) return true;
+      }
+      return false;
+    } finally {
+      this.countdown = null;
+      this.countdownAbort = null;
+      this.statusBar.clearCountdown();
+      this.pushState();
+    }
+  }
+
+  private rearmFrom(index: number): void {
+    if (index < 0 || index >= this.chunks.length) return;
+    if (this.engine.status === "playing" || this.engine.status === "paused" || this.countdown) {
+      this.output.appendLine(`[rearmFrom] busy — ignored`);
+      return;
+    }
+    this.chunks = this.chunks.map((c) => ({
+      ...c,
+      played: c.index < index,
+    }));
+    this.pushState();
   }
 
   private async reset(): Promise<void> {
@@ -350,6 +413,9 @@ class LinesmithController {
       case "reset":
         void this.reset();
         break;
+      case "rearmFrom":
+        if (typeof msg.index === "number") this.rearmFrom(msg.index);
+        break;
       case "settingsChanged":
         if (msg.settings) {
           this.settings = { ...this.settings, ...msg.settings };
@@ -357,6 +423,24 @@ class LinesmithController {
         break;
     }
   }
+}
+
+function sleep(ms: number, signal: AbortSignal): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (signal.aborted) {
+      resolve(true);
+      return;
+    }
+    const timeout = setTimeout(() => {
+      signal.removeEventListener("abort", onAbort);
+      resolve(false);
+    }, ms);
+    const onAbort = () => {
+      clearTimeout(timeout);
+      resolve(true);
+    };
+    signal.addEventListener("abort", onAbort, { once: true });
+  });
 }
 
 export function activate(context: vscode.ExtensionContext): void {

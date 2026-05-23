@@ -11,6 +11,7 @@ export interface PanelHostMessage {
     | "newScript"
     | "detach"
     | "reset"
+    | "rearmFrom"
     | "ready";
   index?: number;
   settings?: SessionSettings;
@@ -23,6 +24,7 @@ export interface PanelState {
   settings: SessionSettings;
   status: PlaybackStatus;
   playingChunkIndex: number | null;
+  countdown: { chunkIndex: number; secondsLeft: number } | null;
 }
 
 export class LinesmithPanel {
@@ -135,6 +137,11 @@ export class LinesmithPanel {
 
   <section id="chunks" class="chunks"></section>
 
+  <div id="countdown-overlay" class="countdown-overlay hidden">
+    <div class="countdown-number" id="countdown-number">3</div>
+    <div class="countdown-label">Starting…</div>
+  </div>
+
   <section class="controls">
     <div class="control-row">
       <label>Mode
@@ -145,11 +152,18 @@ export class LinesmithPanel {
         </select>
       </label>
       <label>WPM
-        <input type="range" id="wpm-slider" min="20" max="200" value="80" />
+        <input type="range" id="wpm-slider" min="20" max="300" value="80" />
         <span id="wpm-value" class="value">80</span>
       </label>
       <label class="checkbox">
         <input type="checkbox" id="jitter-checkbox" checked /> Jitter
+      </label>
+      <label>Countdown
+        <select id="countdown-select">
+          <option value="0" selected>Off</option>
+          <option value="3">3s</option>
+          <option value="5">5s</option>
+        </select>
       </label>
     </div>
     <div class="control-row buttons">

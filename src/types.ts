@@ -21,6 +21,7 @@ export interface Chunk {
   text: string;
   preview: string;
   played: boolean;
+  notes: string[];
 }
 
 export interface SessionSettings {
@@ -28,6 +29,7 @@ export interface SessionSettings {
   wpm: number;
   jitter: boolean;
   lineDelayMs: number;
+  countdownSeconds: number;
 }
 
 export interface ProgressUpdate {

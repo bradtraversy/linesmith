@@ -1,6 +1,7 @@
 import { Chunk } from "./types";
 
 const SEPARATOR = /^\s*---\s*$/;
+const DIRECTIVE = /^\s*@([a-zA-Z][a-zA-Z0-9_-]*)\s*:?\s*(.*)$/;
 const PREVIEW_MAX = 60;
 
 export function parseLinesmith(source: string): Chunk[] {
@@ -19,16 +20,37 @@ export function parseLinesmith(source: string): Chunk[] {
   const chunks: Chunk[] = [];
   let index = 0;
   for (const group of groups) {
-    const text = trimBlankEdges(group).join("\n");
-    if (text.length === 0) continue;
+    const trimmed = trimBlankEdges(group);
+    const { notes, body } = extractDirectives(trimmed);
+    const text = body.join("\n");
+    if (text.length === 0 && notes.length === 0) continue;
     chunks.push({
       index: index++,
       text,
       preview: makePreview(text),
       played: false,
+      notes,
     });
   }
   return chunks;
+}
+
+const KNOWN_DIRECTIVES = new Set(["note"]);
+
+function extractDirectives(lines: string[]): { notes: string[]; body: string[] } {
+  const notes: string[] = [];
+  let i = 0;
+  while (i < lines.length) {
+    const m = lines[i].match(DIRECTIVE);
+    if (!m) break;
+    const name = m[1].toLowerCase();
+    if (!KNOWN_DIRECTIVES.has(name)) break;
+    const value = m[2].trim();
+    if (name === "note" && value.length > 0) notes.push(value);
+    i++;
+  }
+  const body = trimBlankEdges(lines.slice(i));
+  return { notes, body };
 }
 
 function trimBlankEdges(lines: string[]): string[] {

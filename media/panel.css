@@ -80,13 +80,37 @@ body {
 
 .chunk-card {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
   padding: 8px 10px;
   background: var(--vscode-editor-inactiveSelectionBackground);
   border-radius: 4px;
   border-left: 3px solid transparent;
   cursor: default;
+}
+
+.chunk-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chunk-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 8px 2px 36px;
+  border-top: 1px dashed var(--vscode-panel-border);
+  margin-top: 2px;
+}
+
+.chunk-note {
+  font-size: 0.85em;
+  font-style: italic;
+  color: var(--vscode-descriptionForeground);
+  line-height: 1.35;
+  padding-left: 8px;
+  border-left: 2px solid var(--vscode-charts-blue);
 }
 
 .chunk-card.playing {
@@ -98,7 +122,8 @@ body {
   opacity: 0.55;
 }
 
-.chunk-card .play-btn {
+.chunk-card .play-btn,
+.chunk-card .rearm-btn {
   background: none;
   border: none;
   color: var(--vscode-foreground);
@@ -108,8 +133,24 @@ body {
   border-radius: 3px;
 }
 
-.chunk-card .play-btn:hover {
+.chunk-card .play-btn:hover,
+.chunk-card .rearm-btn:hover {
   background: var(--vscode-toolbar-hoverBackground);
+}
+
+.chunk-card .rearm-btn {
+  font-size: 0.95em;
+  color: var(--vscode-descriptionForeground);
+  opacity: 0;
+  transition: opacity 120ms ease-in-out;
+}
+
+.chunk-card:hover .rearm-btn {
+  opacity: 1;
+}
+
+.chunk-card .rearm-btn:hover {
+  color: var(--vscode-foreground);
 }
 
 .chunk-index {
@@ -133,6 +174,36 @@ body {
   min-width: 60px;
   text-align: right;
   font-variant-numeric: tabular-nums;
+}
+
+.countdown-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--vscode-editor-background);
+  opacity: 0.96;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.countdown-number {
+  font-size: 12em;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--vscode-charts-orange);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 2px 24px var(--vscode-editor-background);
+}
+
+.countdown-label {
+  margin-top: 16px;
+  font-size: 1.1em;
+  color: var(--vscode-descriptionForeground);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .controls {

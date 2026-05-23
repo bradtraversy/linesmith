@@ -20,6 +20,18 @@ export class StatusBar {
     this.item.hide();
   }
 
+  showCountdown(secondsLeft: number): void {
+    this.visible = true;
+    this.item.text = `$(watch) Linesmith — starting in ${secondsLeft}…`;
+    this.item.tooltip = "Click to cancel";
+    this.item.command = "linesmith.stop";
+    this.item.show();
+  }
+
+  clearCountdown(): void {
+    if (this.visible) this.refreshIdle();
+  }
+
   update(update: ProgressUpdate): void {
     if (!this.visible) this.visible = true;
 
