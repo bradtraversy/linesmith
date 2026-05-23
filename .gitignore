@@ -3,6 +3,7 @@ out/
 *.vsix
 .vscode-test/
 .DS_Store
+docs/
 
 # .vscode/ — only commit the dev-required files; ignore personal settings
 .vscode/*
